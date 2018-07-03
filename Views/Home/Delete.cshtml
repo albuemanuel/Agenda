@@ -1,0 +1,11 @@
+﻿@model Agenda.Note
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Delete Note</h1>
+    <form asp-action="delete" class="deleteNote">
+        <input class="deleteNote__submit" type="submit" value="Delete" />
+        <button onclick="location.href='/'" type="button">Cancel</button>
+        <input type="hidden" asp-for="Id" />
+    </form>
+</body>

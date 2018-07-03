@@ -1,0 +1,32 @@
+﻿body {
+    font-family: "Roboto";
+    font-size: 14px;
+}
+
+h1 {
+    margin: 5px;
+    font-size: 32px;
+    font-weight: 200;
+}
+
+.note {
+    margin: 5px;
+    border-bottom: 1px solid #e0e0e0;
+    max-width: 300px;
+    padding-bottom: 20px;
+    padding-top: 10px;
+}
+
+.note__title {
+    padding: 5px;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.note__text {
+    padding: 5px;
+    font-weight: 300;
+    color: #111;
+}
+
+

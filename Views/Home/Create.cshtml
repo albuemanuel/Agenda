@@ -1,0 +1,22 @@
+﻿@model Agenda.Note
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/coreNotes.css" />
+</head>
+<body>
+    <h1>Create Note</h1>
+    
+    <form asp-action="create" class="createNote">
+        <div class="createNote__pair">
+            <label>Title:</label>
+            <input asp-for="Title" />
+        </div>
+        <div class="createNote__pair">
+            <label>Text:</label>
+            <textarea asp-for="Text" cols="50" rows="3"> 
+            </textarea>
+        </div>
+        <input class="createNote__submit" type="submit" value="Create" />
+    </form>
+</body>

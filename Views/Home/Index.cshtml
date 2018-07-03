@@ -1,0 +1,21 @@
+﻿@model IEnumerable<Agenda.Note>
+<html>
+<head>
+    <link rel="stylesheet" href="/coreNotes.css" />
+</head>
+<body>
+    <h1>Notes</h1>
+    <a asp-action="Create">Create New</a>
+    <div>
+        @foreach (var note in Model)
+        {
+        <div class="note">
+            <div class="note__title">@note.Title</div>
+            <div class="note__text">@note.Text</div>
+            <a asp-action="edit" asp-route-id="@note.Id">Edit</a>
+            <a asp-action="delete" asp-route-id="@note.Id">Delete</a>
+        </div>
+        }
+    </div>
+</body>
+</html>
