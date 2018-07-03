@@ -3,12 +3,12 @@
     title: "First one",
     text: "long text here"
 }, {
-    id: 2,
+    id: 1,
     title: "Second one",
     text: "long text here"
 }];
 
-var ID = 0;
+var ID = 1;
 
 function Note(title, text) {
     this.title = title;
@@ -70,20 +70,20 @@ function createNotes() {
 
 function addNote(note) {
     Notes.push(note);
-    return createNotes();
+    StartUp();
 }
 
-function AddNotePage() {
-    let titleInput = h('input', { type: "text", value: "Title" }, []);
-    let textInput = h('textarea', { type: "text", value: "Text" }, ["Text"]);
+//function AddNotePage() {
+//    let titleInput = h('input', { type: "text", value: "Title" }, []);
+//    let textInput = h('textarea', { type: "text", value: "Text" }, ["Text"]);
 
-    let addNoteLink = h('a', { href: "#" }, ["Add note"]);
-    addNoteLink.onclick = function () { alert(titleInput.value) };
+//    let addNoteLink = h('a', { href: "#" }, ["Add note"]);
+//    addNoteLink.onclick = function () { alert(titleInput.value) };
 
-    this.render = function () {
-        return h('div', {}, [titleInput, textInput, addNoteLink]);
-    };
-}
+//    this.render = function () {
+//        return h('div', {}, [titleInput, textInput, addNoteLink]);
+//    };
+//}
 
 class EditAddPage {
     constructor(action, note) {
@@ -92,36 +92,43 @@ class EditAddPage {
     }
 
     save(title, text) {
-        let note = new Note(title, text);
-        this.action(note);
+        this.note.title = title;
+        this.note.text = text;
+        this.action(this.note);
     }
 
     render() {
         let me = this,
-            titleInput = h('input', { type: "text", value: "Title" }, []),
+            addNoteLink = h('a', { href: "#" }, ["Add note"]),
             textInput = h('textarea', { type: "text", value: "Text" }, ["Text"]),
-            addNoteLink = h('a', { href: "#" }, ["Add note"]);
+            titleInput = h('input', { type: "text", value: "Title" }, []);
 
-        addNoteLink.onclick = () => me.save(titleInput, textInput);
+        addNoteLink.onclick = () => me.save(titleInput.value, textInput.value);
         return h('div', {}, [titleInput, textInput, addNoteLink]);
     }
 }
 
 function addNotePage() {
     root.innerHTML = "";
-    var addNotePage = new EditAddPage(addNote);
+    var addNotePage = new EditAddPage(addNote, new Note());
 
     root.appendChild(addNotePage.render());
 
 }
 
-let root = document.getElementById('root');
-root.appendChild(createNotes());
-var addNoteLink = h('a', { href: "#", onclick: "addNotePage()" }, ["Add note"]);
-root.appendChild(addNoteLink);
+let root = StartUp();
 
 
 
+
+function StartUp() {
+    let root = document.getElementById('root');
+    root.innerHTML = "";
+    root.appendChild(createNotes());
+    var addNoteLink = h('a', { href: "#", onclick: "addNotePage()" }, ["Add note"]);
+    root.appendChild(addNoteLink);
+    return root;
+}
 //var newNote = new Note("NouaNotita", "Despre magari");
 
 //addNote(newNote);
