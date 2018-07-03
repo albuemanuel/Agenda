@@ -86,23 +86,24 @@ function AddNotePage() {
 }
 
 class EditAddPage {
-    constructor(action) {
+    constructor(action, note) {
         this.action = action;
+        this.note = note;
     }
 
-    add(title, text) {
+    save(title, text) {
         let note = new Note(title, text);
-        action(note);
+        this.action(note);
     }
 
     render() {
-        let titleInput = h('input', { type: "text", value: "Title" }, []);
-        let textInput = h('textarea', { type: "text", value: "Text" }, ["Text"]);
+        let me = this,
+            titleInput = h('input', { type: "text", value: "Title" }, []),
+            textInput = h('textarea', { type: "text", value: "Text" }, ["Text"]),
+            addNoteLink = h('a', { href: "#" }, ["Add note"]);
 
-        let addNoteLink2 = h('a', { href: "#" }, ["Add note"]);
-
-        addNoteLink2.onclick = () => alert(titleInput) ;
-        return h('div', {}, [titleInput, textInput, addNoteLink2]);
+        addNoteLink.onclick = () => me.save(titleInput, textInput);
+        return h('div', {}, [titleInput, textInput, addNoteLink]);
     }
 }
 
@@ -116,7 +117,7 @@ function addNotePage() {
 
 let root = document.getElementById('root');
 root.appendChild(createNotes());
-var addNoteLink = h('a', { onmouseover: "style='cursor: pointer'", onclick: "addNotePage()" }, ["Add note"]);
+var addNoteLink = h('a', { href: "#", onclick: "addNotePage()" }, ["Add note"]);
 root.appendChild(addNoteLink);
 
 

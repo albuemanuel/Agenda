@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -24,6 +25,11 @@ namespace Agenda
 
             repository = type == "db" ? (IRepository)new DataBaseRepository() : new FileRepository();
             
+        }
+
+        public IEnumerable<Note> All()
+        {
+            return repository.Load();
         }
 
         public IActionResult Index()
