@@ -1,42 +1,20 @@
-﻿var Notes = [{
-    id: 0,
-    title: "First one",
-    text: "long text here"
-}, {
-    id: 1,
-    title: "Second one",
-    text: "long text here"
-}];
+﻿var Notes = [];
+
+function importNotes(notesJSON) {
+    var notes = [];
+    notesJSON.forEach(note => 
+        notes.push(new Note(note.title, note.text, note.id))
+    );
+    return notes;
+}
 
 var ID = 1;
 
-function Note(title, text) {
+function Note(title, text, id = ID) {
     this.title = title;
     this.text = text;
     this.id = ++ID;
 }
-
-//function addNoteRow(note) {
-//    var noteRow = document.createElement("tr");
-//    var title = document.createElement("td");
-//    var text = document.createElement("td");
-//    var id = document.createElement("td");
-
-//    title.innerHTML = note.title;
-//    text.innerHTML = note.text;
-//    id.innerHTML = note.id;
-//    noteRow.appendChild(title);
-//    noteRow.appendChild(text);
-//    noteRow.appendChild(id);
-//    document.getElementsByTagName("table")[0].appendChild(noteRow);
-//}
-
-
-//function addNote(title, text) {
-//    var note = new Note(title, text);
-//    Notes.push(note);
-//    addNoteRow(note);
-//}
 
 function h(tag, attributes, childNodes) {
     var element = document.createElement(tag);
@@ -48,16 +26,29 @@ function h(tag, attributes, childNodes) {
         }
     });
     for (let attribute in attributes) {
-        element.setAttribute(attribute, attributes[attribute]);
+        if (typeof (attributes[attribute]) === 'function') {
+            element[attribute] = attributes[attribute];
+        } else {
+            element.setAttribute(attribute, attributes[attribute]);
+        }
     }
     return element;
 }
 
 function createNote(note) {    
-    return h('li', {}, [
-        h('h2', {}, [note.title]),
-        h('p', {}, [note.text])
-     ]);
+    return h('div', {}, [
+        h('li', {}, [
+            h('h2', {}, [note.title]),
+            h('p', {}, [note.text]),
+        ]),
+        h('a', {
+            href: "",
+            onclick: (e) => {
+                editNotePage(note);
+                e.preventDefault();
+            }
+        }, ["Edit"])
+    ]);
 }
 
 function createNotes() {
@@ -73,17 +64,9 @@ function addNote(note) {
     StartUp();
 }
 
-//function AddNotePage() {
-//    let titleInput = h('input', { type: "text", value: "Title" }, []);
-//    let textInput = h('textarea', { type: "text", value: "Text" }, ["Text"]);
-
-//    let addNoteLink = h('a', { href: "#" }, ["Add note"]);
-//    addNoteLink.onclick = function () { alert(titleInput.value) };
-
-//    this.render = function () {
-//        return h('div', {}, [titleInput, textInput, addNoteLink]);
-//    };
-//}
+function editNote(note) {
+    StartUp();
+}
 
 class EditAddPage {
     constructor(action, note) {
@@ -99,27 +82,48 @@ class EditAddPage {
 
     render() {
         let me = this,
-            addNoteLink = h('a', { href: "#" }, ["Add note"]),
-            textInput = h('textarea', { type: "text", value: "Text" }, ["Text"]),
-            titleInput = h('input', { type: "text", value: "Title" }, []);
+            addNoteLink = h('a', { href: "#" }, ["Save"]),
+            textInput = h('textarea', { }, [this.note.text]),
+            titleInput = h('input', { type: "text", value: this.note.title }, []),
+            br = h('br', {}, []),
+            br2 = h('br', {}, []);
+        
 
         addNoteLink.onclick = () => me.save(titleInput.value, textInput.value);
-        return h('div', {}, [titleInput, textInput, addNoteLink]);
+        return h('div', {}, [titleInput, br, br2, textInput, addNoteLink]);
     }
 }
 
 function addNotePage() {
     root.innerHTML = "";
-    var addNotePage = new EditAddPage(addNote, new Note());
+    var addNotePage = new EditAddPage(
+        addNote,
+        new Note("Title", "Text")
+    );
 
     root.appendChild(addNotePage.render());
 
 }
 
-let root = StartUp();
+function editNotePage(note) {
+    root.innerHTML = "";
+    var addNotePage = new EditAddPage(editNote, note);
 
+    root.appendChild(addNotePage.render());
+    root.appendChild(h('a', { href: "", onclick: () => StartUp() }, ["Cancel"]));
+}
 
+function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
+async function getData() {
+    await timeout(500);
+    const x = await fetch('http://localhost:51675/home/all');
+    const info = await x.json();
+    Notes = importNotes(info);
+    StartUp();
+}
 
 function StartUp() {
     let root = document.getElementById('root');
@@ -127,11 +131,9 @@ function StartUp() {
     root.appendChild(createNotes());
     var addNoteLink = h('a', { href: "#", onclick: "addNotePage()" }, ["Add note"]);
     root.appendChild(addNoteLink);
-    return root;
 }
-//var newNote = new Note("NouaNotita", "Despre magari");
 
-//addNote(newNote);
+root.appendChild(h('h2', {}, ["Loading..."]));
+getData();
 
-//root.getElementsByTagName('ul')[0].appendChild(addNote(newNote));
 
