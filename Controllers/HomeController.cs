@@ -44,7 +44,7 @@ namespace Agenda
         }
 
         [HttpPost]
-        public IActionResult Create(Note note)
+        public IActionResult Create([FromBody] Note note)
         {
             repository.Create(note);
             return RedirectToAction(nameof(Index));
