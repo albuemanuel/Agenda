@@ -8,12 +8,12 @@ function importNotes(notesJSON) {
     return notes;
 }
 
-var ID = 1;
+//var ID = 1;
 
-function Note(title, text, id = ID) {
+function Note(title, text, id) {
     this.title = title;
     this.text = text;
-    this.id = ++ID;
+    this.id = id;
 }
 
 function h(tag, attributes, childNodes) {
@@ -47,7 +47,14 @@ function createNote(note) {
                 editNotePage(note);
                 e.preventDefault();
             }
-        }, ["Edit"])
+        }, ["Edit"]),
+        h('a', {
+            href: "",
+            onclick: (e) => {
+                deleteNotePage(note);
+                e.preventDefault();
+            }
+        }, [" Delete"])
     ]);
 }
 
@@ -60,19 +67,33 @@ function createNotes() {
 
 
 async function addNote(note) {
+    root.appendChild(h('h2', {}, ["Processing..."]));
+    await timeout(500);
     Notes.push(note);
-    await postData('http://localhost:51675/home/create', note);
+    await postData('./home/create', note);
     StartUp();
 }
 
-function editNote(note) {
+async function deleteNote(note) {
+    root.appendChild(h('h2', {}, ["Processing..."]));
+    await timeout(500);
+    Notes.splice(Notes.indexOf(note), 1);
+    await postData('./home/delete', note);
+    StartUp();
+}
+
+async function editNote(note) {
+    root.appendChild(h('h2', {}, ["Processing..."]));
+    await timeout(500);
+    await postData('./home/edit', note);
     StartUp();
 }
 
 class EditAddPage {
-    constructor(action, note) {
+    constructor(action, note, nameOfAction = "default") {
         this.action = action;
         this.note = note;
+        this.nameOfAction = nameOfAction;
     }
 
     save(title, text) {
@@ -83,12 +104,11 @@ class EditAddPage {
 
     render() {
         let me = this,
-            addNoteLink = h('a', { href: "#" }, ["Save"]),
+            addNoteLink = h('a', { href: "#" }, [`${this.nameOfAction}`]),
             textInput = h('textarea', { }, [this.note.text]),
             titleInput = h('input', { type: "text", value: this.note.title }, []),
             br = h('br', {}, []),
             br2 = h('br', {}, []);
-        
 
         addNoteLink.onclick = () => me.save(titleInput.value, textInput.value);
         return h('div', {}, [titleInput, br, br2, textInput, addNoteLink]);
@@ -99,16 +119,28 @@ function addNotePage() {
     root.innerHTML = "";
     var addNotePage = new EditAddPage(
         addNote,
-        new Note("Title", "Text")
+        new Note("Title", "Text"),
+        "Create"
     );
 
     root.appendChild(addNotePage.render());
+    root.appendChild(h('a', { href: "", onclick: () => StartUp() }, ["Cancel"]));
 
 }
 
 function editNotePage(note) {
     root.innerHTML = "";
-    var addNotePage = new EditAddPage(editNote, note);
+    var addNotePage = new EditAddPage(editNote, note, "Edit");
+
+    root.appendChild(addNotePage.render());
+    root.appendChild(h('a', { href: "", onclick: () => StartUp() }, ["Cancel"]));
+}
+
+
+
+function deleteNotePage(note) {
+    root.innerHTML = "";
+    var addNotePage = new EditAddPage(deleteNote, note, "Delete");
 
     root.appendChild(addNotePage.render());
     root.appendChild(h('a', { href: "", onclick: () => StartUp() }, ["Cancel"]));

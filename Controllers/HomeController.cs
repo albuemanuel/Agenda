@@ -51,7 +51,7 @@ namespace Agenda
         }
 
         [HttpPost]
-        public IActionResult Edit(Note note)
+        public IActionResult Edit([FromBody] Note note)
         {
             repository.Edit(note);
             return RedirectToAction(nameof(Index));
@@ -64,7 +64,7 @@ namespace Agenda
         }
 
         [HttpPost]
-        public IActionResult Delete(Note note)
+        public IActionResult Delete([FromBody]Note note)
         {
             repository.Delete(note);
             return RedirectToAction(nameof(Index));
